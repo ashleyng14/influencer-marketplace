@@ -194,7 +194,7 @@ function InfluencerView() {
   <section class="max-w-6xl mx-auto px-6 pt-20 pb-10 text-center">
     <p class="reveal text-xs font-semibold tracking-[0.2em] uppercase text-gold-700">For creators</p>
     <h1 class="reveal font-display text-4xl md:text-5xl tracking-tight mt-4" data-delay="1">Open campaigns</h1>
-    <p class="reveal text-ink-soft mt-4 font-light max-w-xl mx-auto" data-delay="2">Brand collaborations matched to your audience and platforms.</p>
+    <p class="reveal text-ink-soft mt-4 font-light max-w-xl mx-auto" data-delay="2">Collaborations with leading UAE brands, matched to your audience and platforms.</p>
     <div class="reveal flex flex-wrap justify-center gap-2 mt-8" data-delay="3">
       ${categories.map(c => `
         <button onclick="setJobFilter('${c}')"
@@ -238,10 +238,80 @@ function JobCard(job, i) {
         <p class="text-xs text-ink-faint">Budget</p>
         <p class="font-semibold text-gold-800">${money(job.budgetMin)}–${money(job.budgetMax)}</p>
       </div>
-      <button onclick="alert('Prototype: application flow for ${job.brand} would open here.')"
-        class="rounded-full bg-ink text-white text-sm font-medium px-5 py-2.5 hover:bg-black transition">Apply</button>
+      <button onclick="openApply('${job.id}')"
+        class="rounded-full bg-ink text-white text-sm font-medium px-5 py-2.5 hover:bg-black transition">Submit portfolio</button>
     </div>
   </div>`;
+}
+
+/* ---------- Portfolio submission (creator applies to a campaign) ---------- */
+
+function openApply(jobId) {
+  const job = JOBS.find(j => j.id === jobId);
+  if (!job) return;
+  const platformOpts = job.platforms
+    .map(k => `<label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" class="apply-platform accent-gold-600" value="${k}" />
+        <span class="inline-flex items-center gap-1.5">${platformChip(k, 18)}${PLATFORMS[k].label}</span>
+      </label>`).join("");
+
+  modalRoot.innerHTML = `
+  <div class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/30 backdrop-blur-md p-4" onclick="if(event.target===this) closeModal()">
+    <div class="relative w-full max-w-xl my-8 rounded-[28px] bg-canvas shadow-2xl reveal in">
+      <button onclick="closeModal()" class="absolute right-4 top-4 z-10 h-9 w-9 rounded-full bg-white/90 hover:bg-white flex items-center justify-center text-ink-soft shadow">✕</button>
+      <div class="px-8 pt-8 pb-8">
+        <div class="flex items-center gap-3">
+          <div class="h-11 w-11 rounded-2xl bg-gold-50 border border-gold-200/70 flex items-center justify-center text-2xl">${job.logo}</div>
+          <div>
+            <p class="text-xs text-ink-faint">Submit portfolio to</p>
+            <h2 class="font-display text-2xl leading-tight">${job.brand}</h2>
+          </div>
+        </div>
+        <p class="text-sm text-ink-soft mt-3 font-light">${job.title}</p>
+
+        <div id="apply-form" class="mt-6 space-y-3">
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input id="apply-name" type="text" placeholder="Your name"
+              class="rounded-xl border border-gold-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold-300" />
+            <input id="apply-handle" type="text" placeholder="Primary handle (e.g. @yourname)"
+              class="rounded-xl border border-gold-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold-300" />
+          </div>
+          <input id="apply-portfolio" type="url" placeholder="Portfolio or media-kit link"
+            class="w-full rounded-xl border border-gold-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold-300" />
+          <div>
+            <p class="text-xs text-ink-faint mb-2">Platforms you'd cover</p>
+            <div class="flex flex-wrap gap-x-5 gap-y-2">${platformOpts}</div>
+          </div>
+          <textarea id="apply-pitch" rows="3" placeholder="Why you're a fit for this campaign"
+            class="w-full rounded-xl border border-gold-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold-300"></textarea>
+          <div class="flex justify-end gap-2 pt-1">
+            <button onclick="closeModal()" class="rounded-full px-4 py-2 text-sm font-medium text-ink-soft hover:bg-gold-100">Cancel</button>
+            <button onclick="submitApply('${job.id}')" class="rounded-full bg-ink text-white text-sm font-medium px-5 py-2 hover:bg-black">Submit portfolio</button>
+          </div>
+        </div>
+
+        <div id="apply-success" class="hidden text-center py-6">
+          <div class="mx-auto h-14 w-14 rounded-full bg-gold-100 flex items-center justify-center text-2xl text-gold-700">✓</div>
+          <h3 class="font-display text-2xl mt-4">Portfolio submitted</h3>
+          <p class="text-ink-soft mt-2 font-light">${job.brand} will review your work and reach out if it's a match.</p>
+          <button onclick="closeModal()" class="mt-6 rounded-full bg-ink text-white text-sm font-medium px-6 py-2.5 hover:bg-black">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.body.style.overflow = "hidden";
+}
+
+function submitApply(jobId) {
+  const name = document.getElementById("apply-name").value.trim();
+  const handle = document.getElementById("apply-handle").value.trim();
+  const portfolio = document.getElementById("apply-portfolio").value.trim();
+  if (!name || !handle || !portfolio) {
+    alert("Please add your name, handle and a portfolio link.");
+    return;
+  }
+  document.getElementById("apply-form").classList.add("hidden");
+  document.getElementById("apply-success").classList.remove("hidden");
 }
 
 /* ============================================================
@@ -260,7 +330,7 @@ function BusinessView() {
   <section class="max-w-6xl mx-auto px-6 pt-20 pb-8 text-center">
     <p class="reveal text-xs font-semibold tracking-[0.2em] uppercase text-gold-700">For businesses</p>
     <h1 class="reveal font-display text-4xl md:text-5xl tracking-tight mt-4" data-delay="1">Find your creator</h1>
-    <p class="reveal text-ink-soft mt-4 font-light max-w-xl mx-auto" data-delay="2">Compare creators across every platform — pricing, packages and reviews.</p>
+    <p class="reveal text-ink-soft mt-4 font-light max-w-xl mx-auto" data-delay="2">Compare the UAE's top creators across every platform — pricing, packages and reviews.</p>
   </section>
   <section class="reveal max-w-6xl mx-auto px-6 pb-8" data-delay="3">
     <div class="flex flex-col lg:flex-row lg:items-center gap-4 justify-between">
