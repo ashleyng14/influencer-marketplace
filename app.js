@@ -1,5 +1,5 @@
 /* ============================================================
- * Aurea — Influencer Marketplace prototype
+ * Collab — Influencer Marketplace prototype
  * Vanilla JS SPA. Light-gold, minimalist, Apple-style.
  * ============================================================ */
 
@@ -110,7 +110,7 @@ function LandingView() {
   <section class="relative overflow-hidden">
     <div class="hero-glow absolute inset-0 -z-10"></div>
     <div class="max-w-4xl mx-auto px-6 pt-24 pb-16 text-center">
-      <p class="reveal text-xs font-semibold tracking-[0.2em] uppercase text-gold-700">Aurea</p>
+      <p class="reveal text-xs font-semibold tracking-[0.2em] uppercase text-gold-700">Collab</p>
       <h1 class="reveal font-display text-5xl md:text-7xl leading-[1.04] tracking-tight mt-5" data-delay="1">
         Where brands and<br><span class="gold-text">creators</span> come together.
       </h1>
