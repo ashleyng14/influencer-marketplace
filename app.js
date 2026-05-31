@@ -41,6 +41,14 @@ function platformChip(key, size = 26) {
   </span>`;
 }
 
+// Brand logo rendered in a clean white rounded tile (handles wordmarks + icons).
+function brandLogo(job, size = 44) {
+  const radius = Math.round(size * 0.32);
+  return `<span class="inline-flex items-center justify-center bg-white border border-gold-200/70 shrink-0 overflow-hidden" style="width:${size}px;height:${size}px;border-radius:${radius}px">
+    <img src="${job.logo}" alt="${job.brand} logo" class="object-contain" style="max-width:${Math.round(size * 0.72)}px;max-height:${Math.round(size * 0.72)}px" />
+  </span>`;
+}
+
 function allReviews(inf) {
   return [...(state.reviewsByInfluencer[inf.id] || []), ...inf.reviews];
 }
@@ -217,7 +225,7 @@ function JobCard(job, i) {
   <div class="reveal card-hover rounded-3xl bg-white border border-gold-200/70 p-7 flex flex-col" data-delay="${(i % 3) + 1}">
     <div class="flex items-start justify-between">
       <div class="flex items-center gap-3">
-        <div class="h-11 w-11 rounded-2xl bg-gold-50 border border-gold-200/70 flex items-center justify-center text-2xl">${job.logo}</div>
+        ${brandLogo(job, 44)}
         <div>
           <p class="font-semibold leading-tight">${job.brand}</p>
           <p class="text-xs text-ink-faint">${job.category}</p>
@@ -261,7 +269,7 @@ function openApply(jobId) {
       <button onclick="closeModal()" class="absolute right-4 top-4 z-10 h-9 w-9 rounded-full bg-white/90 hover:bg-white flex items-center justify-center text-ink-soft shadow">✕</button>
       <div class="px-8 pt-8 pb-8">
         <div class="flex items-center gap-3">
-          <div class="h-11 w-11 rounded-2xl bg-gold-50 border border-gold-200/70 flex items-center justify-center text-2xl">${job.logo}</div>
+          ${brandLogo(job, 44)}
           <div>
             <p class="text-xs text-ink-faint">Submit portfolio to</p>
             <h2 class="font-display text-2xl leading-tight">${job.brand}</h2>
